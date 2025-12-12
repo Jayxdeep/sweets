@@ -1,4 +1,4 @@
-import { registerUser } from "../../../src/services/userService";
+import { registerUser } from "../../src/services/userService";
 describe("User Service - Register User", () => {
   it("should hash password before saving", async () => {
     const mockUserInput = { email: "test@example.com", password: "123456" };
