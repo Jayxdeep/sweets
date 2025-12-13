@@ -6,3 +6,8 @@ export const createSweet =async(data:CreateSweetDTO)=>{
 export const getAllSweets=async()=>{
     return await Sweet.find();
 }
+export const searchSweetsByName=async(name:string)=>{
+    return await Sweet.find({
+        name: new RegExp(name, "i")
+    })
+}
