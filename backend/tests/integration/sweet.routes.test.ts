@@ -92,7 +92,7 @@ describe("DELETE /api/sweets/:id", () => {
     const res = await request(app)
       .delete(`/api/sweets/${sweetId}`);
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe("Sweet deleted");
+    expect(res.body.message).toBe("Sweet Deleted");
   });
 });
 });
