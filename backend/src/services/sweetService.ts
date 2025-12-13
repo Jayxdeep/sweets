@@ -11,3 +11,13 @@ export const searchSweetsByName=async(name:string)=>{
         name: new RegExp(name, "i")
     })
 }
+export const updateSweetById=async(id:string,updates:Partial<CreateSweetDTO>)=>{
+    return await Sweet.findByIdAndUpdate(
+        id,
+        { $set: updates },
+        { new: true }
+    )
+}
+export const deleteSweetById=async(id:String)=>{
+    return await Sweet.findByIdAndDelete(id);
+}
