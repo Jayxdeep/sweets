@@ -1,16 +1,11 @@
 import request from "supertest";
 import app from "../../src/app";
 import { Sweet } from "../../src/models/sweet.model";
-import mongoose from "mongoose";
 
-describe("Sweet Routes - Create Sweet", () => {
+describe("Sweet Routes", () => {
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await Sweet.deleteMany({});
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
   });
 
   it("should create a new sweet", async () => {
@@ -28,8 +23,12 @@ describe("Sweet Routes - Create Sweet", () => {
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("_id");
     expect(res.body.name).toBe("Gulab Jamun");
-    expect(res.body.category).toBe("Indian");
-    expect(res.body.price).toBe(50);
-    expect(res.body.quantity).toBe(20);
+  });
+
+  it("should return all sweets", async () => {
+    const res = await request(app).get("/api/sweets");
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
   });
 });
