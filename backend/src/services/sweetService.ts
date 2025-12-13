@@ -1,5 +1,5 @@
 import { Sweet } from "../models/sweet.model";
-export const createSweet =async(data:any)=>{
-    const sweet=await Sweet.create(data);
-    return sweet;
+import { CreateSweetDTO } from "../types/sweets";
+export const createSweet =async(data:CreateSweetDTO)=>{
+    return await Sweet.create(data);
 }
