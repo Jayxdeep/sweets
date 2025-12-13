@@ -1,24 +1,27 @@
-import {User} from "../models/user.model"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-export const loginUser=async(data:{
-    email:string;password:string
-})=>{
-    const {email,password}=data;
-    const user=await User.findOne({email})
-    if(!user || !user.password){
-        throw new Error("Invalid Username or password")
-    }
-    const isMatch=await bcrypt.compare(password,user.password);
-        if(!isMatch){
-            throw new Error("Invalid credentials");
-        }
-        const token=jwt.sign(
-            {
-                userId:user._id,email:user.email
-            },
-            process.env.JWT_SECRET!,
-            {expiresIn:"2hr"}
-        );
-        return {token}
-    }
+import { User } from "../models/user.model";
+import bcrypt from "bcrypt";
+import { LoginUserDTO } from "../types/auth";
+import { signToken } from "../utils/jwt";
+export const loginUser = async (data: LoginUserDTO) => {
+  const { email, password } = data;
+  if (!email || !password) {
+    throw new Error("Email and password are required");
+  }
+  // Find user
+  const user = await User.findOne({ email });
+  if (!user || !user.password) {
+    throw new Error("Invalid username or password");
+  }
+  // Check password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new Error("Invalid username or password");
+  }
+  // Generate token
+  const token = signToken({
+    userId: user._id.toString(),
+    email: user.email,
+  });
+
+  return { token };
+};
