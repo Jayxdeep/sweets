@@ -48,8 +48,6 @@ The backend enforces **JWT-based authentication and authorization**, ensuring th
 ### Frontend
 - React (Vite)
 - TypeScript
-- CSS (custom styling, no UI libraries)
-
 ---
 
 ## Authentication & Authorization Flow
@@ -71,7 +69,7 @@ The backend enforces **JWT-based authentication and authorization**, ensuring th
 
 #### Get all items
 
-```http
+```bash
   GET /api/items
 ```
 
@@ -81,7 +79,7 @@ The backend enforces **JWT-based authentication and authorization**, ensuring th
 
 #### Get item
 
-```http
+```bash
   GET /api/items/${id}
 ```
 
@@ -110,7 +108,7 @@ The backend enforces **JWT-based authentication and authorization**, ensuring th
 
 ### Clone the Repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Jayxdeep/sweets.git
 cd sweet-shop
 
 ```
