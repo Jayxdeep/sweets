@@ -25,9 +25,6 @@ const Dashboard = () => {
     quantity: "",
   });
 
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState({ price: "", quantity: "" });
-
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -74,14 +71,6 @@ const Dashboard = () => {
     fetchSweets();
   };
 
-  const handleUpdate = async (id: string) => {
-    await api.put(`/sweets/${id}`, {
-      price: Number(editData.price),
-      quantity: Number(editData.quantity),
-    });
-    setEditingId(null);
-    fetchSweets();
-  };
 
   const categories = ["ALL", ...new Set(sweets.map((s) => s.category))];
 
