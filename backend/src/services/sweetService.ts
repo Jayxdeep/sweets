@@ -21,15 +21,10 @@ export const updateSweetById=async(id:string,updates:Partial<CreateSweetDTO>)=>{
 export const deleteSweetById=async(id:String)=>{
     return await Sweet.findByIdAndDelete(id);
 }
-export const purchaseSweetById =async(id:string)=>{
-    const sweet=await Sweet.findById(id);
-    if(!sweet){
-        return null;
-    }
-    if(sweet.quantity<0){
-        throw new Error("Out of stock");
-    }
-    sweet.quantity-=1;
-    await sweet.save();
-    return sweet;
-}
+export const purchaseSweetById = async (id: string) => { //to prevent the negative stock when 2 users are clicked on same time 
+  return await Sweet.findOneAndUpdate(
+    { _id: id, quantity: { $gt: 0 } },
+    { $inc: { quantity: -1 } },
+    { new: true }
+  );
+};
