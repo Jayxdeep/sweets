@@ -138,4 +138,24 @@ it("should return error when purchasing a sweet that is out of stock", async () 
   expect(res.status).toBe(400);
   expect(res.body.message).toBe("Sweet is out of stock");
 });
+describe("POST /api/sweets/:id/restock", () => {
+  it("should increase sweet quantity when restocked", async () => {
+    // create sweet with quantity 2
+    const created = await request(app)
+      .post("/api/sweets")
+      .send({
+        name: "Peda",
+        category: "Indian",
+        price: 40,
+        quantity: 2,
+      });
+    const sweetId = created.body._id.toString();
+    // restock sweet by 5
+    const res = await request(app)
+      .post(`/api/sweets/${sweetId}/restock`)
+      .send({ amount: 5 });
+    expect(res.status).toBe(200);
+    expect(res.body.quantity).toBe(7);
+  });
+});
 });
