@@ -28,3 +28,10 @@ export const purchaseSweetById = async (id: string) => { //to prevent the negati
     { new: true }
   );
 };
+export const restockSweetById=async(id:string,amount:number)=>{
+    return await Sweet.findByIdAndUpdate(
+        id,
+        {$inc:{quantity:amount}}, //the quantity inc by the amount
+        {new:true}
+    )
+}

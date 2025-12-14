@@ -5,7 +5,8 @@ import { searchSweetsByName } from "../services/sweetService";
 import { deleteSweetById } from "../services/sweetService";
 import { updateSweetById } from "../services/sweetService";
 import { purchaseSweetById } from "../services/sweetService";
-import mongoose, { mongo } from "mongoose";
+import { restockSweetById } from "../services/sweetService";
+import mongoose from "mongoose";
 export const createSweetController =async(req:Request,res:Response)=>{
 try{
     const {name,category,price,quantity}=req.body;
@@ -89,3 +90,22 @@ export const purchaseSweetController = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to purchase sweet" });
   }
 };
+export const restockSweetController=async(req:Request,res:Response)=>{
+    try{
+        const {id}=req.params;
+        const {amount}=req.body;
+        if(amount===undefined||amount<=0){
+            return res.status(400).json({message:"Invalid restock amount"})
+        }
+        const updatedSweet=await restockSweetById(id,amount);
+        if(!updatedSweet){
+            return res.status(400).json({message:"Sweet not found"})
+        }
+        return res.status(200).json(updatedSweet)
+    }catch(error:any){
+        if(error?.name==="CastError"){
+            return res.status(400).json({message:"Invalid sweet id"})
+        }
+        return res.status(500).json({message:"Failed to restock sweet"})
+    }
+}
