@@ -17,11 +17,17 @@ export const loginUser = async (data: LoginUserDTO) => {
   if (!isMatch) {
     throw new Error("Invalid username or password");
   }
-  // Generate token
   const token = signToken({
     userId: user._id.toString(),
-    email: user.email,
+    email: user.email!,
+    role: user.role as "USER" | "ADMIN", 
   });
-
-  return { token };
+  return {
+    token,
+    user: {
+      _id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+  };
 };
