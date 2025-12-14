@@ -97,10 +97,8 @@ describe("DELETE /api/sweets/:id", () => {
 });
 it("should return 404 when deleting non-existing sweet", async () => {
   const fakeId = "507f1f77bcf86cd799439011";
-
   const res = await request(app)
     .delete(`/api/sweets/${fakeId}`);
-
   expect(res.status).toBe(404);
   expect(res.body.message).toBe("Sweet not found");
 });
@@ -122,5 +120,22 @@ describe("POST /api/sweets/:id/purchase", () => {
     expect(res.status).toBe(200);
     expect(res.body.quantity).toBe(4);
   });
+});
+it("should return error when purchasing a sweet that is out of stock", async () => {
+  // creating sweet with quantity 0
+  const created = await request(app)
+    .post("/api/sweets")
+    .send({
+      name: "Soan Papdi",
+      category: "Indian",
+      price: 60,
+      quantity: 0,
+    });
+  const sweetId = created.body._id;
+  // attempt purchase
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/purchase`);
+  expect(res.status).toBe(400);
+  expect(res.body.message).toBe("Sweet is out of stock");
 });
 });
