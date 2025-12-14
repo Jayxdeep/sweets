@@ -90,22 +90,22 @@ export const purchaseSweetController = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to purchase sweet" });
   }
 };
-export const restockSweetController=async(req:Request,res:Response)=>{
-    try{
-        const {id}=req.params;
-        const {amount}=req.body;
-        if(amount===undefined||amount<=0){
-            return res.status(400).json({message:"Invalid restock amount"})
-        }
-        const updatedSweet=await restockSweetById(id,amount);
-        if(!updatedSweet){
-            return res.status(400).json({message:"Sweet not found"})
-        }
-        return res.status(200).json(updatedSweet)
-    }catch(error:any){
-        if(error?.name==="CastError"){
-            return res.status(400).json({message:"Invalid sweet id"})
-        }
-        return res.status(500).json({message:"Failed to restock sweet"})
+export const restockSweetController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { amount } = req.body;
+    const updatedSweet = await restockSweetById(id, amount);
+    if (!updatedSweet) {
+      return res.status(404).json({ message: "Sweet not found" });
     }
-}
+    return res.status(200).json(updatedSweet);
+  } catch (error: any) {
+    if (error?.message === "Invalid restock amount") {
+      return res.status(400).json({ message: "Invalid restock amount" });
+    }
+    if (error?.name === "CastError") {
+      return res.status(400).json({ message: "Invalid sweet id" });
+    }
+    return res.status(500).json({ message: "Failed to restock sweet" });
+  }
+};

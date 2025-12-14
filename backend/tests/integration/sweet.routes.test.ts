@@ -158,4 +158,21 @@ describe("POST /api/sweets/:id/restock", () => {
     expect(res.body.quantity).toBe(7);
   });
 });
+//this is a negative test to check if the stocks hit negative or not
+it("should return error for invalid restock amount", async () => {
+  const created = await request(app)
+    .post("/api/sweets")
+    .send({
+      name: "Kalakand",
+      category: "Indian",
+      price: 70,
+      quantity: 5,
+    });
+  const sweetId = created.body._id.toString();
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/restock`)
+    .send({ amount: -3 });
+  expect(res.status).toBe(400);
+  expect(res.body.message).toBe("Invalid restock amount");
+});
 });

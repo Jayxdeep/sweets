@@ -29,6 +29,9 @@ export const purchaseSweetById = async (id: string) => { //to prevent the negati
   );
 };
 export const restockSweetById=async(id:string,amount:number)=>{
+    if(amount<0){
+        throw new Error("Invalid restock amount") //can be reused later if we want to update the stocks 
+    }
     return await Sweet.findByIdAndUpdate(
         id,
         {$inc:{quantity:amount}}, //the quantity inc by the amount
