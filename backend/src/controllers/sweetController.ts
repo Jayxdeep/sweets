@@ -4,6 +4,7 @@ import { getAllSweets } from "../services/sweetService";
 import { searchSweetsByName } from "../services/sweetService";
 import { deleteSweetById } from "../services/sweetService";
 import { updateSweetById } from "../services/sweetService";
+import { purchaseSweetById } from "../services/sweetService";
 import mongoose from "mongoose";
 export const createSweetController =async(req:Request,res:Response)=>{
 try{
@@ -70,5 +71,20 @@ export const deleteSweetController=async(req:Request,res:Response)=>{
         return res.status(200).json({message:"Sweet Deleted"})
     }catch(error){
         return res.status(400).json({message:"Failed to delete sweet"})
+    }
+}
+export const purchaseSweetController=async(req:Request,res:Response)=>{
+    try{
+        const {id}=req.params;
+        const updatedSweet=await purchaseSweetById(id);
+        if(!updatedSweet){
+            return res.status(400).json({message:"Sweet not found"})
+        }
+        return res.status(200).json(updatedSweet);
+    }catch(error:any){
+        if(error.message==="Out of stock"){
+            res.status(400).json({message:"Sweet is out of stock"})
+        }
+        return res.status(500).json({message:"Failed to purchase sweet"})
     }
 }
