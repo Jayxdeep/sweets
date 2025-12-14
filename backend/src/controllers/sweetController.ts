@@ -93,19 +93,19 @@ export const purchaseSweetController = async (req: Request, res: Response) => {
 export const restockSweetController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { amount } = req.body;
-    const updatedSweet = await restockSweetById(id, amount);
-    if (!updatedSweet) {
-      return res.status(404).json({ message: "Sweet not found" });
-    }
-    return res.status(200).json(updatedSweet);
-  } catch (error: any) {
-    if (error?.message === "Invalid restock amount") {
-      return res.status(400).json({ message: "Invalid restock amount" });
-    }
-    if (error?.name === "CastError") {
+    const { quantity } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid sweet id" });
     }
-    return res.status(500).json({ message: "Failed to restock sweet" });
+    if (typeof quantity !== "number" || quantity <= 0) {
+      return res.status(400).json({ message: "Invalid restock quantity" });
+    }
+    const sweet = await restockSweetById(id, quantity);
+    if (!sweet) {
+      return res.status(404).json({ message: "Sweet not found" });
+    }
+    return res.status(200).json(sweet);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
   }
 };
