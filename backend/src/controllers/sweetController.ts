@@ -4,7 +4,7 @@ import { getAllSweets } from "../services/sweetService";
 import { searchSweetsByName } from "../services/sweetService";
 import { deleteSweetById } from "../services/sweetService";
 import { updateSweetById } from "../services/sweetService";
-import { Sweet } from "../models/sweet.model"
+import mongoose from "mongoose";
 export const createSweetController =async(req:Request,res:Response)=>{
 try{
     const {name,category,price,quantity}=req.body;
@@ -60,6 +60,9 @@ export const updateSweetController=async(req:Request,res:Response)=>{
 export const deleteSweetController=async(req:Request,res:Response)=>{
     try{
         const {id}=req.params;
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({message:"Invalid sweet id"})
+        }
         const deletedSweet=await deleteSweetById(id);
         if(!deletedSweet){
             return res.status(404).json({message:"Sweet not found"});

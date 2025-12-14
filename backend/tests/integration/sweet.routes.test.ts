@@ -95,4 +95,32 @@ describe("DELETE /api/sweets/:id", () => {
     expect(res.body.message).toBe("Sweet Deleted");
   });
 });
+it("should return 404 when deleting non-existing sweet", async () => {
+  const fakeId = "507f1f77bcf86cd799439011";
+
+  const res = await request(app)
+    .delete(`/api/sweets/${fakeId}`);
+
+  expect(res.status).toBe(404);
+  expect(res.body.message).toBe("Sweet not found");
+});
+describe("POST /api/sweets/:id/purchase", () => {
+  it("should decrease sweet quantity by 1 when purchased", async () => {
+    // create sweet with quantity 5
+    const created = await request(app)
+      .post("/api/sweets")
+      .send({
+        name: "Mysore Pak",
+        category: "Indian",
+        price: 80,
+        quantity: 5,
+      });
+    const sweetId = created.body._id;
+    // purchase sweet
+    const res = await request(app)
+      .post(`/api/sweets/${sweetId}/purchase`);
+    expect(res.status).toBe(200);
+    expect(res.body.quantity).toBe(4);
+  });
+});
 });
