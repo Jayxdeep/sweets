@@ -9,7 +9,7 @@ import mongoose, { mongo } from "mongoose";
 export const createSweetController =async(req:Request,res:Response)=>{
 try{
     const {name,category,price,quantity}=req.body;
-    if(!name||!category||!price||!quantity){
+    if(name===undefined || category===undefined || price===undefined || quantity===undefined){ //it matches the inventory logic and testing
         return res.status(400).json({message:"All fields are required"})
     }
     if(price<=0||quantity<0){
@@ -73,18 +73,19 @@ export const deleteSweetController=async(req:Request,res:Response)=>{
         return res.status(400).json({message:"Failed to delete sweet"})
     }
 }
-export const purchaseSweetController=async(req:Request,res:Response)=>{
-    try{
-        const {id}=req.params;
-        if(!mongoose.Types.ObjectId.isValid(id)){
-            return res.status(400).json({message:"Invalid sweet id"});
-        }
-        const updatedSweet=await purchaseSweetById(id);
-        if(!updatedSweet){
-            return res.status(400).json({message:"Sweet is out of stock or not found"})
-        }
-        return res.status(200).json(updatedSweet);
-    }catch{
-        return res.status(500).json({message:"Failed to purchase sweet"})
+export const purchaseSweetController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updatedSweet = await purchaseSweetById(id);
+    if (!updatedSweet) {
+      return res.status(400).json({ message: "Sweet is out of stock" });
     }
-}
+    return res.status(200).json(updatedSweet);
+  } catch (error: any) {
+    // only truly malformed ids end up here
+    if (error?.name === "CastError") {
+      return res.status(400).json({ message: "Invalid sweet id" });
+    }
+    return res.status(500).json({ message: "Failed to purchase sweet" });
+  }
+};

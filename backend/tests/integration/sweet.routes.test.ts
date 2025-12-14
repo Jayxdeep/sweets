@@ -131,7 +131,7 @@ it("should return error when purchasing a sweet that is out of stock", async () 
       price: 60,
       quantity: 0,
     });
-  const sweetId = created.body._id;
+  const sweetId = created.body._id.toString();
   // attempt purchase
   const res = await request(app)
     .post(`/api/sweets/${sweetId}/purchase`);
