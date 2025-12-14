@@ -31,10 +31,21 @@ const Dashboard = () => {
     setIsAdmin(localStorage.getItem("role") === "ADMIN");
   }, []);
 
+  // ✅ SAFE FETCH (handles 401 properly)
   const fetchSweets = async () => {
-    const res = await api.get("/sweets");
-    setSweets(res.data);
-    setLoading(false);
+    try {
+      const res = await api.get("/sweets");
+      setSweets(res.data);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        localStorage.clear();
+        window.location.href = "/sweets/login";
+        return;
+      }
+      console.error("Failed to load sweets", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -71,17 +82,28 @@ const Dashboard = () => {
     fetchSweets();
   };
 
-
   const categories = ["ALL", ...new Set(sweets.map((s) => s.category))];
 
   if (loading) return <p className="loading">Loading sweets...</p>;
 
-  const available = sweets.filter((s) => s.quantity > 0);
-  const outOfStock = sweets.filter((s) => s.quantity === 0);
+  // ✅ FILTER LOGIC (SEARCH + CATEGORY)
+  const filteredSweets = sweets.filter((s) => {
+    const matchSearch =
+      search.trim() === "" ||
+      s.name.toLowerCase().includes(search.toLowerCase());
+
+    const matchCategory =
+      category === "ALL" || s.category === category;
+
+    return matchSearch && matchCategory;
+  });
+
+  const available = filteredSweets.filter((s) => s.quantity > 0);
+  const outOfStock = filteredSweets.filter((s) => s.quantity === 0);
 
   return (
     <div className="app-layout">
-      {/* SIDEBAR (Option B) */}
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <h2 className="logo">🍬 Sweet Shop</h2>
 
@@ -102,7 +124,7 @@ const Dashboard = () => {
 
       {/* MAIN CONTENT */}
       <main className="main-content">
-        {/* HERO (Option C) */}
+        {/* HERO */}
         <div className="hero">
           <div>
             <h1>Fresh Indian Sweets</h1>
@@ -216,7 +238,7 @@ const Dashboard = () => {
   );
 };
 
-/* Extracted Card (clean separation, still same logic) */
+/* CARD COMPONENT */
 const SweetCard = ({
   sweet,
   isAdmin,
